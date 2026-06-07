@@ -342,19 +342,33 @@ function sfxCombo(n){for(var i=0;i<Math.min(n,5);i++){playTone(600+i*200,.08,'si
 function sfxMilestone(){playTone(523,.15,'triangle',.2,0);playTone(659,.15,'triangle',.18,.1);playTone(784,.15,'triangle',.16,.2);playTone(1047,.35,'triangle',.22,.3)}
 function sfxVictory(){var notes=[523,659,784,1047,784,1047,1319];for(var i=0;i<notes.length;i++){playTone(notes[i],.2,'triangle',.2,i*.12)}for(var j=0;j<4;j++){playTone(80,.08,'square',.25,j*.4)}setTimeout(function(){playTone(1047,.6,'triangle',.18,0);playTone(1319,.6,'triangle',.15,.1);playTone(1568,.8,'triangle',.12,.2)},800)}
 
-// MP3 语音 — 参考水项目方案，手机/微信可播
-var currentAudio=null;
+// MP3 语音 — 预加载方案 (Android/iOS/微信 全兼容)
+var audioPool={};
+var audioLoaded=false;
+function preloadAudio(){
+  if(audioLoaded)return;
+  var names=['backstory','milestone5','milestone10','milestone15','milestone20','victory'];
+  names.forEach(function(name){
+    var a=new Audio();
+    a.src='audio/'+name+'.mp3';
+    a.preload='auto';
+    a.load();
+    audioPool[name]=a;
+  });
+  audioLoaded=true;
+}
 function playAudio(name){
   if(!soundEnabled)return;
-  if(currentAudio){currentAudio.pause();currentAudio.src='';currentAudio=null;}
-  var a=new Audio();
-  a.src='audio/'+name+'.mp3';
-  currentAudio=a;
-  var played=false;
-  var doPlay=function(){if(!played){played=true;a.play().catch(function(){})}};
-  a.addEventListener('canplay',doPlay,{once:true});
-  a.load();
-  a.play().catch(function(){});
+  preloadAudio();
+  var a=audioPool[name];
+  if(!a)return;
+  // 从头播放
+  try{a.currentTime=0}catch(e){}
+  a.play().catch(function(){
+    // Android fallback: 重新load再播
+    a.load();
+    setTimeout(function(){a.play().catch(function(){})},50);
+  });
 }
 
 // ══════════════════ 呐喊气泡 (视觉装饰) ══════════════════
@@ -667,6 +681,7 @@ renderBoard();
 // 首次点击时初始化 AudioContext (手机浏览器要求用户交互后才能播放声音)
 document.addEventListener('pointerdown',function initAudio(){
   getCtx();if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+  preloadAudio();
 },{once:false});
 })();
 </script>
