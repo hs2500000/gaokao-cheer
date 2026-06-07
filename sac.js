@@ -3,83 +3,104 @@ var CITY='南昌',running=false,attempts=0,timer=null;
 // 面板
 var sac=document.createElement('div');
 sac.id='_sac';
-sac.style.cssText='position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99999;background:#d63031;color:#fff;padding:14px 28px;border-radius:20px;font-size:18px;font-weight:900;text-align:center;cursor:pointer';
-var t=document.createElement('span');t.id='_t';t.textContent='点我开始自动抢';sac.appendChild(t);
-sac.appendChild(document.createElement('br'));
-var sub=document.createElement('span');sub.style.fontSize='10px';sub.textContent=CITY+' | 自动选考区考场';sac.appendChild(sub);
+sac.style.cssText='position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99999;background:#d63031;color:#fff;padding:12px 24px;border-radius:20px;font-size:16px;font-weight:900;text-align:center;cursor:pointer';
+var t=document.createElement('span');t.id='_t';t.textContent='点我开始抢';sac.appendChild(t);
 document.body.appendChild(sac);
 
-// 找弹窗中的确认按钮
-function findConfirmBtn(){
-var all=document.querySelectorAll('button,a,input[type=submit],input[type=button]');
-for(var i=0;i<all.length;i++){
-var tx=(all[i].textContent||all[i].value||'').trim();
-if(tx==='确定'||tx==='确认'||tx==='提交'||tx==='OK'||tx==='是'){return all[i]}
-}return null;
+function log(msg){document.getElementById('_t').textContent=msg;console.log(msg)}
+
+function findInAllDocs(sel){
+var all=[];
+document.querySelectorAll(sel).forEach(function(e){all.push(e)});
+// 检查iframe
+var iframes=document.querySelectorAll('iframe');
+iframes.forEach(function(fr){
+try{var d=fr.contentDocument||fr.contentWindow.document;if(d){d.querySelectorAll(sel).forEach(function(e){all.push(e)})}}catch(e){}
+});
+return all;
 }
 
-// 选城市和场次
-function selectInPopup(){
-var t=document.getElementById('_t');
-// 先找南昌并点击
+function clickInAllDocs(sel,textMatch){
 var found=false;
-var all=document.querySelectorAll('label,td,span,div,option,a,li');
-for(var i=0;i<all.length;i++){
-var tx=(all[i].textContent||'');
-if(tx.indexOf(CITY)>=0){
-var radio=all[i].querySelector('input[type=radio],input[type=checkbox]');
-if(radio&&!radio.checked){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}));radio.dispatchEvent(new Event('click',{bubbles:true}))}
-all[i].click();found=true;t.textContent='选中'+CITY;break;
+var els=findInAllDocs(sel);
+for(var i=0;i<els.length;i++){
+var e=els[i];
+if(e.disabled||e.style.display==='none')continue;
+var tx=(e.textContent||e.value||'').trim();
+if(!textMatch||tx.indexOf(textMatch)>=0||tx===textMatch){
+e.click();found=true;log('clicked:'+tx.slice(0,20));
+break;
 }}
-if(!found){
-// 如果没找到南昌，尝试找第一个可选城市
-all.forEach(function(e){if(found)return;var tx=e.textContent||'';var r=e.querySelector('input[type=radio]');if(r&&!r.checked&&tx.length<20){r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}));found=true;t.textContent='选中默认城市'}});
-}
-// 等弹窗更新后点确认
-setTimeout(function(){
-var btn=findConfirmBtn();
-if(btn){btn.click();t.textContent='已确认选择'}else{t.textContent='未找到确认按钮'}
-},600);
+return found;
 }
 
-// 主循环
+function selectCityInPopup(){
+// 尝试多种方式找南昌
+var done=false;
+
+// 方法1: 找包含南昌的可点击元素
+var all=findInAllDocs('label,td,span,div,option,a,li,button');
+for(var i=0;i<all.length;i++){
+if(done)break;
+var tx=(all[i].textContent||'').trim();
+if(tx.indexOf(CITY)>=0&&tx.length<30){
+var radio=all[i].querySelector('input[type=radio],input[type=checkbox]');
+if(radio){radio.checked=true;radio.dispatchEvent(new Event('change',{bubbles:true}))}
+all[i].click();done=true;log('选中:'+CITY);
+}}
+
+// 方法2: 找select下拉
+if(!done){
+var sels=findInAllDocs('select');
+sels.forEach(function(sel){
+if(done)return;
+var opts=sel.querySelectorAll('option');
+for(var j=0;j<opts.length;j++){
+if(opts[j].textContent.indexOf(CITY)>=0){sel.value=opts[j].value;sel.dispatchEvent(new Event('change',{bubbles:true}));done=true;log('下拉选:'+CITY);break;}
+}});
+}
+
+// 选完点确认
+setTimeout(function(){
+clickInAllDocs('button,a,input[type=submit],input[type=button]','确定')||
+clickInAllDocs('button,a,input[type=submit],input[type=button]','确认')||
+clickInAllDocs('button,a,input[type=submit],input[type=button]','提交')||
+clickInAllDocs('button,a,input[type=submit],input[type=button]','OK');
+log('confirmed');
+},500);
+}
+
 function doLoop(){
 if(!running)return;attempts++;
-var t=document.getElementById('_t');
 
-// 步骤1: 找所有选择按钮并点击
-var selectBtns=[];
-document.querySelectorAll('button,a,input[type=button],input[type=submit]').forEach(function(b){
+// 找选择按钮
+var selBtns=[];
+findInAllDocs('button,a,input[type=button],input[type=submit]').forEach(function(b){
 var tx=(b.textContent||b.value||'').trim();
-if(tx==='选择')selectBtns.push(b);
+if(tx==='选择')selBtns.push(b);
 });
 
-if(selectBtns.length>0){
-t.textContent='['+attempts+']点击'+selectBtns.length+'个选择按钮';
-selectBtns.forEach(function(b){b.click()});
-// 等弹窗出来后选城市
-setTimeout(function(){selectInPopup()},800);
-// 继续处理下一个选择按钮
-setTimeout(function(){doLoop()},3000);
+if(selBtns.length>0){
+log('['+attempts+'] clicking '+selBtns.length+' select btns');
+selBtns.forEach(function(b){b.click()});
+setTimeout(selectCityInPopup,1000);
+setTimeout(function(){doLoop()},3500);
 return;
 }
 
-// 步骤2: 没有选择按钮了，找下一步
-var nextFound=false;
-document.querySelectorAll('button,a,input[type=submit],input[type=button]').forEach(function(b){
-if(nextFound)return;
-var tx=(b.textContent||b.value||'').trim();
-if(tx.indexOf('下一步')>=0){b.click();nextFound=true;t.textContent='点击了下一步'}else if(tx==='提交'||tx==='确定'){b.click();nextFound=true;t.textContent='点击了提交'}
-});
+// 找下一步
+var hasNext=clickInAllDocs('button,a,input[type=submit],input[type=button]','下一步');
+if(hasNext){log('clicked next step');setTimeout(function(){doLoop()},2000);return;}
 
-if(!nextFound){t.textContent='['+attempts+']等待...'}
+// 找提交
+var hasSubmit=clickInAllDocs('button,a,input[type=submit],input[type=button]','提交');
+if(hasSubmit){log('clicked submit')}
+
+log('['+attempts+'] waiting...');
 if(running)timer=setTimeout(doLoop,2000);
 }
 
 document.getElementById('_sac').onclick=function(){
-if(running){running=false;clearTimeout(timer);document.getElementById('_t').textContent='已停止';document.getElementById('_sac').style.background='#d63031';return}
-running=true;
-document.getElementById('_sac').style.background='#00b894';
-document.getElementById('_t').textContent='自动抢报中...';
-doLoop();
+if(running){running=false;clearTimeout(timer);document.getElementById('_sac').style.background='#d63031';log('stopped');return}
+running=true;document.getElementById('_sac').style.background='#00b894';doLoop();
 };
