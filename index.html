@@ -6,10 +6,9 @@
 <title>🎓 江冠铖 高考加油！</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
+html,body{height:100%;overflow:hidden;background:#fdf5e6}
 body{
   font-family:'PingFang SC','Microsoft YaHei',sans-serif;
-  background:linear-gradient(180deg,#fdf5e6 0%,#f5e6d3 20%,#c9a96e 65%,#8B6914 100%);
   display:flex;justify-content:center;align-items:center;
   touch-action:manipulation;
   -webkit-user-select:none;user-select:none;
@@ -18,7 +17,22 @@ body{
 }
 .container{width:100%;max-width:420px;height:100vh;height:100dvh;display:flex;flex-direction:column;align-items:center;padding:6px 10px;position:relative;overflow-y:auto;overflow-x:hidden}
 
-/* ── 墙体背景 ── */
+/* ── 呐喊气泡 ── */
+.shout-bubble{
+  position:fixed;z-index:350;pointer-events:none;
+  font-size:22px;font-weight:900;color:#d63031;
+  animation:shoutUp 2s ease-out forwards;
+  text-shadow:0 0 10px rgba(255,215,0,.8),2px 2px 0 rgba(0,0,0,.1);
+  white-space:nowrap;
+}
+@keyframes shoutUp{
+  0%{opacity:1;transform:translate(-50%,0) scale(.5)}
+  15%{opacity:1;transform:translate(-50%,-20px) scale(1.2)}
+  40%{opacity:1;transform:translate(-50%,-60px) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-160px) scale(.8)}
+}
+
+/* ── 墙体 ── */
 .wall{position:absolute;top:0;left:0;width:100%;height:42%;background:linear-gradient(180deg,#fdf5e6,#f5e6d3,transparent);z-index:0}
 
 /* ── 黑板 ── */
@@ -41,15 +55,10 @@ body{
 }
 .score-item{text-align:center;min-width:50px}
 .score-subject{font-size:10px;color:#636e72;display:block}
-.score-value{
-  font-size:16px;font-weight:900;color:#b2bec3;
-  transition:all .5s ease;display:block;
-}
+.score-value{font-size:16px;font-weight:900;color:#b2bec3;transition:all .5s ease;display:block}
 .score-value.up{color:#00b894;animation:scoreBump .5s ease}
 .score-value.gold{color:#ffd700;text-shadow:0 0 8px rgba(255,215,0,.6)}
-@keyframes scoreBump{
-  0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}
-}
+@keyframes scoreBump{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
 .score-total{width:100%;text-align:center;margin-top:2px;font-size:11px;color:#d63031;font-weight:bold}
 .score-total .st-num{font-size:18px;color:#d63031;transition:all .5s ease}
 .score-total .st-num.up{color:#ffd700;animation:scoreBump .5s ease}
@@ -63,11 +72,10 @@ body{
   -webkit-appearance:none;outline:none;
 }
 
-/* ── 当前加油人 ── */
+/* ── 加油人条 ── */
 .player-bar{
   position:relative;z-index:3;display:flex;align-items:center;gap:6px;
-  margin-top:4px;
-  background:rgba(255,255,255,.7);border-radius:20px;padding:3px 12px;
+  margin-top:4px;background:rgba(255,255,255,.7);border-radius:20px;padding:3px 12px;
 }
 .player-label{font-size:10px;color:#795548}
 .player-name{font-size:12px;font-weight:900;color:#d63031}
@@ -83,34 +91,14 @@ body{
 .hero-zone{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;margin:3px 0}
 .hero-desk{position:relative;width:160px;height:110px;display:flex;flex-direction:column;align-items:center;transition:all .3s}
 .hero-desk.shake{animation:heroShake .45s ease}
-@keyframes heroShake{
-  0%,100%{transform:translateX(0)}
-  25%{transform:translateX(-5px) rotate(-1deg)}
-  50%{transform:translateX(5px) rotate(1deg)}
-  75%{transform:translateX(-2px)}
-}
-.desk{
-  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:130px;height:10px;
-  background:linear-gradient(180deg,#c9a96e,#a07828);
-  border-radius:3px;box-shadow:0 4px 8px rgba(0,0,0,.3);
-}
-.desk::after{
-  content:'';position:absolute;bottom:-22px;left:7px;
-  width:6px;height:22px;background:#8B6914;
-  box-shadow:90px 0 0 #8B6914;
-}
+@keyframes heroShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px) rotate(-1deg)}50%{transform:translateX(5px) rotate(1deg)}75%{transform:translateX(-2px)}}
+.desk{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:130px;height:10px;background:linear-gradient(180deg,#c9a96e,#a07828);border-radius:3px;box-shadow:0 4px 8px rgba(0,0,0,.3)}
+.desk::after{content:'';position:absolute;bottom:-22px;left:7px;width:6px;height:22px;background:#8B6914;box-shadow:90px 0 0 #8B6914}
 .hero-body{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:3}
-.hero-face{
-  font-size:44px;display:block;transition:all .4s ease;
-  animation:faceBounce 2s ease-in-out infinite;
-}
+.hero-face{font-size:44px;display:block;transition:all .4s ease;animation:faceBounce 2s ease-in-out infinite}
 @keyframes faceBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 .hero-face.celebrate{animation:celebrateJump .3s ease 3}
-@keyframes celebrateJump{
-  0%,100%{transform:translateY(0) scale(1)}
-  50%{transform:translateY(-15px) scale(1.2)}
-}
+@keyframes celebrateJump{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-15px) scale(1.2)}}
 .hero-name{font-size:13px;font-weight:900;color:#2d3436;background:rgba(255,255,255,.85);padding:1px 8px;border-radius:10px;margin-top:-4px}
 .hero-tag{font-size:8px;color:#636e72;background:rgba(255,215,0,.5);padding:0 5px;border-radius:6px;margin-top:1px}
 .books{position:absolute;bottom:10px;right:16px;z-index:2}
@@ -128,18 +116,14 @@ body{
 .cheer-item.active{opacity:1;filter:none;animation:cheerPop .4s ease}
 @keyframes cheerPop{0%{transform:scale(.5)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
 
-/* ── 里程碑特效 ── */
+/* ── 里程碑 Toast ── */
 .milestone-toast{
   position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
   font-size:50px;z-index:300;pointer-events:none;
   animation:toastPop 1.2s ease forwards;
   text-shadow:0 0 30px rgba(255,215,0,.8);
 }
-@keyframes toastPop{
-  0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}
-  30%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}
-  100%{opacity:0;transform:translate(-50%,-70%) scale(1)}
-}
+@keyframes toastPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.3)}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
 
 /* ── 按钮区 ── */
 .btn-zone{position:relative;z-index:10;width:100%;height:100px}
@@ -166,10 +150,7 @@ body{
 /* ── 粒子 ── */
 .particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:200}
 .particle{position:absolute;font-size:18px;animation:flyUp 1s ease-out forwards}
-@keyframes flyUp{
-  0%{opacity:1;transform:translateY(0) scale(1) rotate(0)}
-  100%{opacity:0;transform:translateY(-120px) scale(.3) rotate(180deg)}
-}
+@keyframes flyUp{0%{opacity:1;transform:translateY(0) scale(1) rotate(0)}100%{opacity:0;transform:translateY(-120px) scale(.3) rotate(180deg)}}
 
 /* ── 屏幕闪光 ── */
 .screen-flash{animation:scrFlash .4s ease}
@@ -178,68 +159,34 @@ body{
 /* ── 胜利弹窗 ── */
 .win-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.65);z-index:400;justify-content:center;align-items:center}
 .win-overlay.show{display:flex}
-.win-dialog{
-  background:linear-gradient(180deg,#fffef5,#fff8e1);
-  border-radius:20px;padding:24px 20px;text-align:center;
-  max-width:320px;width:90%;animation:bounceIn .5s ease;
-  box-shadow:0 20px 60px rgba(0,0,0,.3);
-  border:3px solid #ffd700;
-}
+.win-dialog{background:linear-gradient(180deg,#fffef5,#fff8e1);border-radius:20px;padding:24px 20px;text-align:center;max-width:320px;width:90%;animation:bounceIn .5s ease;box-shadow:0 20px 60px rgba(0,0,0,.3);border:3px solid #ffd700}
 @keyframes bounceIn{0%{transform:scale(.3);opacity:0}50%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
 .win-icon{font-size:56px;margin-bottom:10px;animation:pulse .8s ease-in-out infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 .win-text{font-size:18px;font-weight:bold;color:#d63031;margin-bottom:8px}
 .win-sub{font-size:12px;color:#5D4037;margin-bottom:14px;line-height:1.7;white-space:pre-line}
-.win-close{
-  background:#e17055;color:#fff;border:none;
-  padding:11px 30px;border-radius:30px;
-  font-size:15px;font-weight:bold;cursor:pointer;
-  -webkit-appearance:none;outline:none;margin-bottom:8px;
-}
+.win-close{background:#e17055;color:#fff;border:none;padding:11px 30px;border-radius:30px;font-size:15px;font-weight:bold;cursor:pointer;-webkit-appearance:none;outline:none;margin-bottom:8px}
 .win-share-hint{font-size:11px;color:#636e72;margin-top:4px}
 
-/* ── 名字输入弹窗 ── */
+/* ── 名字弹窗 ── */
 .name-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:500;justify-content:center;align-items:center}
 .name-overlay.show{display:flex}
-.name-dialog{
-  background:#fff;border-radius:18px;padding:24px 20px;text-align:center;
-  max-width:300px;width:88%;animation:bounceIn .5s ease;
-  box-shadow:0 20px 60px rgba(0,0,0,.3);
-}
+.name-dialog{background:#fff;border-radius:18px;padding:24px 20px;text-align:center;max-width:300px;width:88%;animation:bounceIn .5s ease;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .name-dialog .nd-title{font-size:18px;font-weight:900;color:#d63031;margin-bottom:6px}
 .name-dialog .nd-sub{font-size:12px;color:#636e72;margin-bottom:14px}
-.name-dialog input{
-  width:100%;padding:10px 14px;border:2px solid #e17055;border-radius:25px;
-  font-size:16px;text-align:center;outline:none;
-  margin-bottom:12px;font-family:inherit;
-}
+.name-dialog input{width:100%;padding:10px 14px;border:2px solid #e17055;border-radius:25px;font-size:16px;text-align:center;outline:none;margin-bottom:12px;font-family:inherit}
 .name-dialog input:focus{border-color:#d63031}
-.name-confirm{
-  background:linear-gradient(135deg,#e17055,#d63031);
-  color:#fff;border:none;padding:10px 40px;border-radius:25px;
-  font-size:16px;font-weight:bold;cursor:pointer;
-  -webkit-appearance:none;outline:none;
-}
+.name-confirm{background:linear-gradient(135deg,#e17055,#d63031);color:#fff;border:none;padding:10px 40px;border-radius:25px;font-size:16px;font-weight:bold;cursor:pointer;-webkit-appearance:none;outline:none}
 .name-skip{font-size:12px;color:#b2bec3;margin-top:10px;cursor:pointer}
 
 /* ── 光荣榜弹窗 ── */
 .board-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:450;justify-content:center;align-items:center}
 .board-overlay.show{display:flex}
-.board-dialog{
-  background:#fffef5;border-radius:18px;padding:20px 16px;text-align:center;
-  max-width:340px;width:92%;max-height:70vh;overflow-y:auto;
-  animation:bounceIn .5s ease;
-  box-shadow:0 20px 60px rgba(0,0,0,.3);
-  border:3px solid #ffd700;
-}
+.board-dialog{background:#fffef5;border-radius:18px;padding:20px 16px;text-align:center;max-width:340px;width:92%;max-height:70vh;overflow-y:auto;animation:bounceIn .5s ease;box-shadow:0 20px 60px rgba(0,0,0,.3);border:3px solid #ffd700}
 .board-dialog .bd-title{font-size:20px;font-weight:900;color:#d63031;margin-bottom:4px}
 .board-dialog .bd-sub{font-size:11px;color:#636e72;margin-bottom:12px}
 .board-list{text-align:left}
-.board-row{
-  display:flex;align-items:center;padding:8px 10px;
-  border-bottom:1px solid #f0e6d3;gap:8px;
-  font-size:13px;
-}
+.board-row{display:flex;align-items:center;padding:8px 10px;border-bottom:1px solid #f0e6d3;gap:8px;font-size:13px}
 .board-row:last-child{border-bottom:none}
 .board-rank{font-size:18px;min-width:28px;text-align:center}
 .board-row .br-name{font-weight:bold;color:#2d3436;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -247,22 +194,16 @@ body{
 .board-row .br-combo{color:#0984e3;font-size:11px;min-width:50px;text-align:center}
 .board-row .br-time{color:#b2bec3;font-size:10px;min-width:70px;text-align:right}
 .board-empty{color:#b2bec3;font-size:13px;padding:20px 0}
-.board-close{
-  background:#e17055;color:#fff;border:none;
-  padding:10px 30px;border-radius:25px;
-  font-size:14px;font-weight:bold;cursor:pointer;
-  margin-top:14px;-webkit-appearance:none;outline:none;
-}
+.board-close{background:#e17055;color:#fff;border:none;padding:10px 30px;border-radius:25px;font-size:14px;font-weight:bold;cursor:pointer;margin-top:14px;-webkit-appearance:none;outline:none}
 .board-clear{font-size:11px;color:#b2bec3;margin-top:8px;cursor:pointer}
 </style>
 </head>
 <body>
 
 <div class="container" id="container">
-  <!-- 语音开关 -->
-  <button class="voice-toggle" id="voiceToggle" title="语音开关">🔊</button>
-
+  <button class="voice-toggle" id="voiceToggle" title="音效开关">🔊</button>
   <div class="wall"></div>
+
   <div class="blackboard">
     <span class="bb-title">距 离 高 考</span>
     <span class="bb-countdown">最 后 冲 刺</span>
@@ -278,7 +219,6 @@ body{
     <div class="score-total">总分：<span class="st-num" id="stotal">???</span></div>
   </div>
 
-  <!-- 当前加油人 -->
   <div class="player-bar" id="playerBar">
     <span class="player-label">👤 加油人：</span>
     <span class="player-name" id="playerNameDisplay">点击设置</span>
@@ -293,27 +233,21 @@ body{
 
   <div class="hero-zone" id="heroZone">
     <div class="hero-desk" id="heroDesk">
-      <div class="desk"></div>
-      <div class="paper"></div>
+      <div class="desk"></div><div class="paper"></div>
       <div class="hero-body">
         <span class="hero-face" id="heroFace">😰</span>
         <div class="hero-name">江冠铖</div>
         <div class="hero-tag">高考考生</div>
       </div>
       <div class="books">
-        <div class="book book1"></div>
-        <div class="book book2"></div>
-        <div class="book book3"></div>
+        <div class="book book1"></div><div class="book book2"></div><div class="book book3"></div>
       </div>
     </div>
     <div class="cheer-bar" id="cheerBar">
       <span class="cheer-label">加油能量：</span>
-      <span class="cheer-item" data-idx="0">🐟</span>
-      <span class="cheer-item" data-idx="1">💪</span>
-      <span class="cheer-item" data-idx="2">⭐</span>
-      <span class="cheer-item" data-idx="3">🍀</span>
-      <span class="cheer-item" data-idx="4">💯</span>
-      <span class="cheer-item" data-idx="5">🎓</span>
+      <span class="cheer-item" data-idx="0">🐟</span><span class="cheer-item" data-idx="1">💪</span>
+      <span class="cheer-item" data-idx="2">⭐</span><span class="cheer-item" data-idx="3">🍀</span>
+      <span class="cheer-item" data-idx="4">💯</span><span class="cheer-item" data-idx="5">🎓</span>
     </div>
   </div>
 
@@ -327,17 +261,14 @@ body{
 </div>
 
 <div id="particles" class="particles"></div>
-
-<!-- 里程碑 Toast -->
 <div id="milestoneToast"></div>
 
-<!-- 名字输入弹窗 -->
+<!-- 名字弹窗 -->
 <div class="name-overlay show" id="nameOverlay">
   <div class="name-dialog">
     <div class="nd-title">📝 你是谁？</div>
     <div class="nd-sub">留下你的名字，加入助威光荣榜！</div>
-    <input type="text" id="nameInput" placeholder="如：江冠铖妈妈" maxlength="12" autocomplete="off">
-    <br>
+    <input type="text" id="nameInput" placeholder="如：江冠铖妈妈" maxlength="12" autocomplete="off"><br>
     <button class="name-confirm" id="nameConfirm">💪 开始加油！</button>
     <div class="name-skip" id="nameSkip">先看看，等会再填</div>
   </div>
@@ -348,9 +279,7 @@ body{
   <div class="board-dialog">
     <div class="bd-title">🏆 助威光荣榜</div>
     <div class="bd-sub">感谢每一位为江冠铖加油的人！</div>
-    <div class="board-list" id="boardList">
-      <div class="board-empty">还没有人加过油<br>来做第一个吧！💪</div>
-    </div>
+    <div class="board-list" id="boardList"><div class="board-empty">还没有人加过油<br>来做第一个吧！💪</div></div>
     <button class="board-close" id="boardClose">关闭</button>
     <div class="board-clear" id="boardClear">清空记录</div>
   </div>
@@ -369,190 +298,223 @@ body{
 
 <script>
 (function(){
-const btn=document.getElementById('cheerBtn');
-const btnZone=document.getElementById('btnZone');
-const heroDesk=document.getElementById('heroDesk');
-const heroFace=document.getElementById('heroFace');
-const msgBox=document.getElementById('msgBox');
-const particlesBox=document.getElementById('particles');
-const winOverlay=document.getElementById('winOverlay');
-const winStats=document.getElementById('winStats');
-const winClose=document.getElementById('winClose');
-const container=document.getElementById('container');
-const cheerItems=document.querySelectorAll('.cheer-item');
-const nameOverlay=document.getElementById('nameOverlay');
-const nameInput=document.getElementById('nameInput');
-const nameConfirm=document.getElementById('nameConfirm');
-const nameSkip=document.getElementById('nameSkip');
-const playerNameDisplay=document.getElementById('playerNameDisplay');
-const playerChange=document.getElementById('playerChange');
-const boardToggle=document.getElementById('boardToggle');
-const boardOverlay=document.getElementById('boardOverlay');
-const boardList=document.getElementById('boardList');
-const boardClose=document.getElementById('boardClose');
-const boardClear=document.getElementById('boardClear');
-const voiceToggle=document.getElementById('voiceToggle');
-const milestoneToast=document.getElementById('milestoneToast');
+var btn=document.getElementById('cheerBtn');
+var btnZone=document.getElementById('btnZone');
+var heroDesk=document.getElementById('heroDesk');
+var heroFace=document.getElementById('heroFace');
+var msgBox=document.getElementById('msgBox');
+var particlesBox=document.getElementById('particles');
+var winOverlay=document.getElementById('winOverlay');
+var winStats=document.getElementById('winStats');
+var winClose=document.getElementById('winClose');
+var container=document.getElementById('container');
+var cheerItems=document.querySelectorAll('.cheer-item');
+var nameOverlay=document.getElementById('nameOverlay');
+var nameInput=document.getElementById('nameInput');
+var nameConfirm=document.getElementById('nameConfirm');
+var nameSkip=document.getElementById('nameSkip');
+var playerNameDisplay=document.getElementById('playerNameDisplay');
+var playerChange=document.getElementById('playerChange');
+var boardToggle=document.getElementById('boardToggle');
+var boardOverlay=document.getElementById('boardOverlay');
+var boardList=document.getElementById('boardList');
+var boardClose=document.getElementById('boardClose');
+var boardClear=document.getElementById('boardClear');
+var voiceToggle=document.getElementById('voiceToggle');
+var milestoneToast=document.getElementById('milestoneToast');
 
-let attempts=0,done=false,combo=0,maxCombo=0,lastTap=0;
-let currentPlayer='';
-let voiceEnabled=true;
-let lastMilestone=0;
+var attempts=0,done=false,combo=0,maxCombo=0,lastTap=0,currentPlayer='',soundEnabled=true,lastMilestone=0;
+var AudioCtx=window.AudioContext||window.webkitAudioContext;
+var audioCtx=null;
 
-// ── 成绩数据 ──
-// 每5次一个里程碑: 0→5→10→15→20→25
-const SCORE_STAGES = [
-  {s1:'???',s2:'???',s3:'???',s4:'???',total:'???'},           // 0
-  {s1:'98', s2:'85', s3:'91', s4:'?', total:'加油中...'},      // 5
-  {s1:'108',s2:'99', s3:'103',s4:'?', total:'加油中...'},      // 10
-  {s1:'118',s2:'112',s3:'115',s4:'?', total:'加油中...'},      // 15
-  {s1:'128',s2:'125',s3:'127',s4:'?', total:'加油中...'},      // 20
-  {s1:'138',s2:'142',s3:'135',s4:'289',total:'704'},           // 25
-];
+function getCtx(){
+  if(!audioCtx){try{audioCtx=new AudioCtx()}catch(e){}}
+  return audioCtx;
+}
 
-const FACES = ['😰','😅','😤','😵','🥺','😊','🥳'];
+// ══════════════════ 音效系统 (Web Audio API — 手机/电脑通用) ══════════════════
 
-// ── 语音系统 ──
+function playTone(freq,dur,type,vol,delay){
+  if(!soundEnabled)return;
+  try{
+    var c=getCtx();if(!c)return;
+    var t=c.currentTime+(delay||0);
+    var o=c.createOscillator();var g=c.createGain();
+    o.type=type||'sine';o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(vol||.15,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.connect(g);g.connect(c.destination);
+    o.start(t);o.stop(t+dur);
+  }catch(e){}
+}
+
+// 点击声
+function sfxClick(){
+  playTone(800,.08,'sine',.1);
+  playTone(1200,.05,'sine',.06,.03);
+}
+
+// 按钮逃跑声
+function sfxDodge(){
+  playTone(400,.1,'triangle',.08);
+  playTone(300,.12,'triangle',.06,.05);
+}
+
+// 真正加油声 (激昂上扬)
+function sfxCheer(){
+  playTone(523,.12,'sine',.18,0);   // C5
+  playTone(659,.12,'sine',.16,.08);  // E5
+  playTone(784,.18,'sine',.2,.15);   // G5 — 激昂!
+}
+
+// 假加油声 (下行 — 被骗了)
+function sfxFake(){
+  playTone(600,.1,'triangle',.12,0);
+  playTone(400,.15,'triangle',.1,.06);
+  playTone(200,.2,'sawtooth',.04,.12);
+}
+
+// 连击声
+function sfxCombo(n){
+  for(var i=0;i<Math.min(n,5);i++){
+    playTone(600+i*200,.08,'sine',.12,i*.06);
+  }
+}
+
+// 里程碑声 (辉煌钟声)
+function sfxMilestone(){
+  playTone(523,.15,'triangle',.2,0);
+  playTone(659,.15,'triangle',.18,.1);
+  playTone(784,.15,'triangle',.16,.2);
+  playTone(1047,.35,'triangle',.22,.3);
+}
+
+// 胜利号角 (超激昂!)
+function sfxVictory(){
+  var notes=[523,659,784,1047,784,1047,1319];
+  for(var i=0;i<notes.length;i++){
+    playTone(notes[i],.2,'triangle',.2,i*.12);
+  }
+  // 低音鼓点
+  for(var j=0;j<4;j++){
+    playTone(80,.08,'square',.25,j*.4);
+  }
+  // 持续高音
+  setTimeout(function(){
+    playTone(1047,.6,'triangle',.18,0);
+    playTone(1319,.6,'triangle',.15,.1);
+    playTone(1568,.8,'triangle',.12,.2);
+  },800);
+}
+
+// ══════════════════ 呐喊气泡 (视觉替代语音) ══════════════════
+
+function shout(text,x,y){
+  var b=document.createElement('div');
+  b.className='shout-bubble';
+  b.textContent=text;
+  b.style.left=(x||50)+'%';
+  b.style.top=(y||40)+'%';
+  document.body.appendChild(b);
+  setTimeout(function(){b.remove()},2100);
+}
+
+function shoutRandom(msgs){
+  shout(msgs[Math.floor(Math.random()*msgs.length)],30+Math.random()*40,30+Math.random()*30);
+}
+
+// ══════════════════ 语音 (SpeechSynthesis — 桌面增强) ══════════════════
+
+var SHOUT_CHEER=['加油！！','冲啊！！','好样的！！','继续！！','你可以的！！','必胜！！'];
+var SHOUT_FAKE=['啊！差一点！','偏了！！','再来！！','加油信号丢了！'];
+var SHOUT_REAL=['加到油了！！','能量来了！！','江冠铖收到！','继续冲！！'];
+var SHOUT_MILESTONE_5=['成绩提升了！！','及格了！！冲啊！！'];
+var SHOUT_MILESTONE_10=['越来越好！！','稳住继续冲！！'];
+var SHOUT_MILESTONE_15=['突破瓶颈！！','突飞猛进！！'];
+var SHOUT_MILESTONE_20=['就差一步了！！','理综要出分了！！','江冠铖加油！！'];
+
 function speak(text,rate){
-  if(!voiceEnabled)return;
+  if(!soundEnabled)return;
   try{
     var u=new SpeechSynthesisUtterance(text);
-    u.lang='zh-CN';u.rate=rate||1;u.volume=.8;u.pitch=1.1;
+    u.lang='zh-CN';u.rate=rate||.9;u.volume=.9;u.pitch=1.2;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
   }catch(e){}
 }
 
-// 里程碑语音
-const VOICE_MILESTONE={
-  5:['加油！江冠铖的成绩开始提升了！','江冠铖加油！语文和数学及格了！'],
-  10:['继续加油！成绩越来越好了！','稳住！江冠铖需要更多信心！'],
-  15:['太棒了！江冠铖的成绩突飞猛进！','坚持住！理综马上就要出分了！'],
-  20:['厉害！江冠铖已经信心满满！','差一点了！再加把劲！'],
-};
+// ══════════════════ 成绩系统 ══════════════════
 
-const VOICE_FAKE=['啊！差一点！','加油信号丢了...','偏了偏了！再试一次！'];
-const VOICE_REAL=['好！加到了一口油！','太棒了！继续加油！','江冠铖收到能量！'];
-const VOICE_VICTORY='江冠铖高考大捷！金榜题名！前程似锦！恭喜恭喜！';
+var SCORE_STAGES=[
+  {s1:'???',s2:'???',s3:'???',s4:'???',total:'???'},
+  {s1:'98', s2:'85', s3:'91', s4:'?', total:'加油中...'},
+  {s1:'108',s2:'99', s3:'103',s4:'?', total:'加油中...'},
+  {s1:'118',s2:'112',s3:'115',s4:'?', total:'加油中...'},
+  {s1:'128',s2:'125',s3:'127',s4:'?', total:'加油中...'},
+  {s1:'138',s2:'142',s3:'135',s4:'289',total:'704'},
+];
 
-// ── 更新成绩单 ──
+var FACES=['😰','😅','😤','😵','🥺','😊','🥳'];
+
 function updateScoreboard(stage){
   if(stage===lastMilestone)return;
   lastMilestone=stage;
   var s=SCORE_STAGES[stage];
-  var els={1:document.getElementById('s1'),2:document.getElementById('s2'),3:document.getElementById('s3'),4:document.getElementById('s4'),t:document.getElementById('stotal')};
-  ['1','2','3','4'].forEach(function(k){
-    var el=els[k];
-    var prev=el.textContent;
-    var next=s['s'+k];
+  var els=[document.getElementById('s1'),document.getElementById('s2'),document.getElementById('s3'),document.getElementById('s4'),document.getElementById('stotal')];
+  var keys=['s1','s2','s3','s4','total'];
+  keys.forEach(function(k,i){
+    var el=els[i];var prev=el.textContent;var next=s[k];
     if(prev!==next){
-      el.textContent=next;
-      el.classList.remove('up','gold');
-      void el.offsetWidth;
+      el.textContent=next;el.classList.remove('up','gold');void el.offsetWidth;
       if(next!=='???')el.classList.add('up');
       if(next==='289'||next==='138'||next==='142'||next==='135')el.classList.add('gold');
     }
   });
-  if(els.t.textContent!==s.total){
-    els.t.textContent=s.total;
-    els.t.classList.remove('up');
-    void els.t.offsetWidth;
-    if(s.total==='704')els.t.classList.add('up');
-  }
 }
 
-// ── 里程碑特效 ──
-function showMilestoneToast(emoji,text){
-  var t=document.createElement('div');
-  t.className='milestone-toast';
-  t.textContent=emoji;
-  milestoneToast.appendChild(t);
-  setTimeout(function(){t.remove()},1300);
-  // 语音
-  if(VOICE_MILESTONE[attempts]){
-    var msgs=VOICE_MILESTONE[attempts];
-    speak(msgs[Math.floor(Math.random()*msgs.length)],.85);
-  }else{
-    speak(text||'加油！',.9);
-  }
+function showMilestoneToast(emoji){
+  var t=document.createElement('div');t.className='milestone-toast';t.textContent=emoji;
+  milestoneToast.appendChild(t);setTimeout(function(){t.remove()},1300);
 }
 
-// ── 存储 ──
-function loadRecords(){
-  try{return JSON.parse(localStorage.getItem('cheer_records')||'[]')}catch(e){return[]}
-}
-function saveRecords(records){
-  try{localStorage.setItem('cheer_records',JSON.stringify(records))}catch(e){}
-}
-function loadPlayer(){
-  try{return localStorage.getItem('cheer_player')||''}catch(e){return''}
-}
-function savePlayer(name){
-  currentPlayer=name;
-  try{localStorage.setItem('cheer_player',name)}catch(e){}
-  playerNameDisplay.textContent=name||'匿名';
-}
+// ══════════════════ 存储 ══════════════════
 
-// ── 光荣榜渲染 ──
+function loadRecords(){try{return JSON.parse(localStorage.getItem('cheer_records')||'[]')}catch(e){return[]}}
+function saveRecords(r){try{localStorage.setItem('cheer_records',JSON.stringify(r))}catch(e){}}
+function loadPlayer(){try{return localStorage.getItem('cheer_player')||''}catch(e){return''}}
+function savePlayer(name){currentPlayer=name;try{localStorage.setItem('cheer_player',name)}catch(e){}playerNameDisplay.textContent=name||'匿名'}
+
 function renderBoard(){
   var records=loadRecords();
-  if(!records.length){
-    boardList.innerHTML='<div class="board-empty">还没有人加过油<br>来做第一个吧！💪</div>';
-    return;
-  }
+  if(!records.length){boardList.innerHTML='<div class="board-empty">还没有人加过油<br>来做第一个吧！💪</div>';return}
   records.sort(function(a,b){return b.time-a.time});
   var html='';
   records.forEach(function(r,i){
-    var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
-    var rank=medal||(i+1);
+    var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';var rank=medal||(i+1);
     var d=new Date(r.time);
     var ds=d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-    html+='<div class="board-row">'+
-      '<span class="board-rank">'+rank+'</span>'+
-      '<span class="br-name">'+esc(r.name||'匿名')+'</span>'+
-      '<span class="br-score">💪'+r.attempts+'次</span>'+
-      '<span class="br-combo">⚡'+r.maxCombo+'连击</span>'+
-      '<span class="br-time">'+ds+'</span>'+
-    '</div>';
+    html+='<div class="board-row"><span class="board-rank">'+rank+'</span><span class="br-name">'+esc(r.name||'匿名')+'</span><span class="br-score">💪'+r.attempts+'次</span><span class="br-combo">⚡'+r.maxCombo+'连击</span><span class="br-time">'+ds+'</span></div>';
   });
   boardList.innerHTML=html;
 }
 function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function addRecord(name,a,mc){var records=loadRecords();records.push({name:name||'匿名',attempts:a,maxCombo:mc,time:Date.now()});if(records.length>50)records=records.slice(-50);saveRecords(records);renderBoard()}
 
-function addRecord(name,a,mc){
-  var records=loadRecords();
-  records.push({name:name||'匿名',attempts:a,maxCombo:mc,time:Date.now()});
-  if(records.length>50)records=records.slice(-50);
-  saveRecords(records);
-  renderBoard();
-}
+// ══════════════════ 弹窗事件 ══════════════════
 
-// ── 名字弹窗 ──
-function showNameDialog(){
-  var saved=loadPlayer();
-  nameInput.value=saved||'';
-  nameOverlay.classList.add('show');
-  setTimeout(function(){nameInput.focus()},400);
-}
-function hideNameDialog(){nameOverlay.classList.remove('show');}
-nameConfirm.addEventListener('pointerdown',function(e){e.preventDefault();var n=nameInput.value.trim()||'匿名';savePlayer(n);hideNameDialog();});
-nameSkip.addEventListener('pointerdown',function(e){e.preventDefault();if(!currentPlayer){savePlayer('匿名');}hideNameDialog();});
-playerChange.addEventListener('pointerdown',function(e){e.preventDefault();showNameDialog();});
+function showNameDialog(){var saved=loadPlayer();nameInput.value=saved||'';nameOverlay.classList.add('show');setTimeout(function(){nameInput.focus()},400)}
+function hideNameDialog(){nameOverlay.classList.remove('show')}
+nameConfirm.addEventListener('pointerdown',function(e){e.preventDefault();var n=nameInput.value.trim()||'匿名';savePlayer(n);hideNameDialog()});
+nameSkip.addEventListener('pointerdown',function(e){e.preventDefault();if(!currentPlayer){savePlayer('匿名')}hideNameDialog()});
+playerChange.addEventListener('pointerdown',function(e){e.preventDefault();showNameDialog()});
+boardToggle.addEventListener('pointerdown',function(e){e.preventDefault();renderBoard();boardOverlay.classList.add('show')});
+boardClose.addEventListener('pointerdown',function(e){e.preventDefault();boardOverlay.classList.remove('show')});
+boardClear.addEventListener('pointerdown',function(e){e.preventDefault();if(confirm('确定清空光荣榜吗？此操作不可恢复！')){saveRecords([]);renderBoard()}});
+voiceToggle.addEventListener('pointerdown',function(e){e.preventDefault();soundEnabled=!soundEnabled;voiceToggle.textContent=soundEnabled?'🔊':'🔇';if(soundEnabled)sfxClick()});
 
-// ── 光荣榜弹窗 ──
-boardToggle.addEventListener('pointerdown',function(e){e.preventDefault();renderBoard();boardOverlay.classList.add('show');});
-boardClose.addEventListener('pointerdown',function(e){e.preventDefault();boardOverlay.classList.remove('show');});
-boardClear.addEventListener('pointerdown',function(e){e.preventDefault();if(confirm('确定清空光荣榜吗？此操作不可恢复！')){saveRecords([]);renderBoard();}});
+// ══════════════════ 嘲讽库 ══════════════════
 
-// ── 语音开关 ──
-voiceToggle.addEventListener('pointerdown',function(e){
-  e.preventDefault();voiceEnabled=!voiceEnabled;
-  voiceToggle.textContent=voiceEnabled?'🔊':'🔇';
-  if(voiceEnabled)speak('语音已开启',.8);
-});
-
-// ── 嘲讽库 ──
-const taunts=[
+var taunts=[
   '<span style="font-size:38px">😝</span><br>加油跑偏了！再试试？',
   '<span style="font-size:38px">🏃</span><br>江冠铖：你倒是加啊！',
   '<span style="font-size:38px">😅</span><br>手滑了...加油按钮溜了',
@@ -569,32 +531,33 @@ const taunts=[
   '<span style="font-size:38px">🥱</span><br>加太快了，信号延迟~',
   '<span style="font-size:38px">🙈</span><br>加不到加不到~就加不到~',
 ];
-const tauntsN=[
+var tauntsN=[
   '<span style="font-size:38px">😏</span><br>第 <span style="color:#e17055;font-size:26px">{n}</span> 次了<br>江冠铖快等睡着了...',
   '<span style="font-size:38px">🤯</span><br>已经 <span style="color:#d63031;font-size:26px">{n}</span> 次！<br>你是来捣乱的吧？',
   '<span style="font-size:38px">😱</span><br>天哪 <span style="color:#e17055;font-size:26px">{n}</span> 次！<br>江冠铖比你急！！',
   '<span style="font-size:38px">💪</span><br>第 <span style="color:#00b894;font-size:26px">{n}</span> 次！<br>毅力可嘉...但还没加到',
 ];
-const milestones={
+var milestones={
   5:'<span style="font-size:38px">😤</span><br>5次了！江冠铖翻了个白眼<br><span style="color:#00b894;font-size:14px">📊 成绩开始有起色了！</span>',
   10:'<span style="font-size:38px">🫠</span><br>10次！！江冠铖开始怀疑人生<br><span style="color:#00b894;font-size:14px">📊 成绩又涨了一点！</span>',
   15:'<span style="font-size:38px">😵</span><br>15次...江冠铖：我心态崩了<br><span style="color:#00b894;font-size:14px">📊 但成绩越来越好了！</span>',
   20:'<span style="font-size:38px">🥺</span><br>20次！江冠铖：求你认真加一次...<br><span style="color:#00b894;font-size:14px">📊 就差理综了！</span>',
 };
-const fakeMsgs=[
+var fakeMsgs=[
   '<span style="font-size:38px">🎉</span><br>啊！差点就加上了！！',
   '<span style="font-size:38px">💪</span><br>加油！...诶不对加错了人',
   '<span style="font-size:38px">😈</span><br>骗你的！根本没人被加到~',
   '<span style="font-size:38px">🤪</span><br>你以为加到了？幻觉！',
 ];
-const comboNames={3:'⚡️3连击！江冠铖抬了下头',5:'🔥5连击！江冠铖眼睛亮了',8:'💥8连击！！江冠铖站起来了！'};
-const realMsgs=[
+var comboNames={3:'⚡️3连击！江冠铖抬了下头',5:'🔥5连击！江冠铖眼睛亮了',8:'💥8连击！！江冠铖站起来了！'};
+var realMsgs=[
   '<span style="font-size:38px">😤</span><br>行吧...给江冠铖加了一口油！<br>但我又跑了！',
   '<span style="font-size:38px">😒</span><br>江冠铖收到一罐红牛！<br>继续加啊别停~',
 ];
-const EMOJIS=['💪','⭐','🐟','🎯','💯','📚','✨','🍀','🔥','🏆','💖','🎓'];
+var EMOJIS=['💪','⭐','🐟','🎯','💯','📚','✨','🍀','🔥','🏆','💖','🎓'];
 
-// ── 游戏逻辑 ──
+// ══════════════════ 核心逻辑 ══════════════════
+
 function updateMsg(html,sub){
   msgBox.innerHTML='<span class="big">'+html+'</span>';
   if(sub)msgBox.innerHTML+=sub;
@@ -607,14 +570,11 @@ function updateMsg(html,sub){
 function spawnParticles(x,y,count){
   count=count||8;
   for(var i=0;i<count;i++){
-    var p=document.createElement('span');
-    p.className='particle';
+    var p=document.createElement('span');p.className='particle';
     p.textContent=EMOJIS[i%EMOJIS.length];
-    p.style.left=(x+(Math.random()-.5)*90)+'px';
-    p.style.top=y+'px';
+    p.style.left=(x+(Math.random()-.5)*90)+'px';p.style.top=y+'px';
     p.style.animationDuration=(.5+Math.random()*1)+'s';
-    particlesBox.appendChild(p);
-    setTimeout(function(){p.remove()},1600);
+    particlesBox.appendChild(p);setTimeout(function(){p.remove()},1600);
   }
 }
 
@@ -622,64 +582,40 @@ function dodge(){
   var w=btnZone.offsetWidth-btn.offsetWidth;
   var h=btnZone.offsetHeight-btn.offsetHeight;
   var x,y;
-  if(attempts%7===0){
-    var c=Math.floor(Math.random()*4);
-    if(c===0){x=0;y=0}
-    else if(c===1){x=w;y=0}
-    else if(c===2){x=0;y=h}
-    else{x=w;y=h}
-  }else if(attempts%5===0){
-    x=Math.max(0,Math.min(w,parseFloat(btn.style.left||0)+(Math.random()-.5)*w*.3));
-    y=Math.max(0,Math.min(h,parseFloat(btn.style.top||0)+(Math.random()-.5)*h*.3));
-  }else{
-    x=Math.random()*w;
-    y=Math.random()*h;
-  }
-  btn.style.left=x+'px';
-  btn.style.top=y+'px';
-  btn.style.transform='none';
+  if(attempts%7===0){var c=Math.floor(Math.random()*4);if(c===0){x=0;y=0}else if(c===1){x=w;y=0}else if(c===2){x=0;y=h}else{x=w;y=h}}
+  else if(attempts%5===0){x=Math.max(0,Math.min(w,parseFloat(btn.style.left||0)+(Math.random()-.5)*w*.3));y=Math.max(0,Math.min(h,parseFloat(btn.style.top||0)+(Math.random()-.5)*h*.3))}
+  else{x=Math.random()*w;y=Math.random()*h}
+  btn.style.left=x+'px';btn.style.top=y+'px';btn.style.transform='none';
 }
 
 function updateFace(){
   var idx=attempts<=4?0:attempts<=9?1:attempts<=14?2:attempts<=19?3:attempts<=22?4:5;
-  if(done)idx=6;
-  heroFace.textContent=FACES[idx];
+  if(done)idx=6;heroFace.textContent=FACES[idx];
 }
 
 function updateCheerBar(){
   var p=done?6:Math.min(6,Math.floor((Math.max(0,attempts-17))/2));
-  cheerItems.forEach(function(item,i){
-    if(i<p)item.classList.add('active');
-    else item.classList.remove('active');
-  });
+  cheerItems.forEach(function(item,i){if(i<p)item.classList.add('active');else item.classList.remove('active')});
 }
 
-// ── 核心：每5次触发里程碑 ──
 function checkMilestone(){
   var stage=0;
-  if(attempts>=25)stage=6;
-  else if(attempts>=20)stage=5;
-  else if(attempts>=15)stage=4;
-  else if(attempts>=10)stage=3;
-  else if(attempts>=5)stage=2;
-  else if(attempts>=1)stage=1;
-
+  if(attempts>=25)stage=6;else if(attempts>=20)stage=5;else if(attempts>=15)stage=4;else if(attempts>=10)stage=3;else if(attempts>=5)stage=2;else if(attempts>=1)stage=1;
   updateScoreboard(stage);
 
-  // 每5次整关口有特效和语音
-  if(attempts>0 && attempts%5===0 && attempts<25){
-    var msgs=['',''];
-    if(attempts===5){showMilestoneToast('📈','成绩提升！');setTimeout(function(){speak('好样的！成绩及格了！继续加油！',.85)},300)}
-    else if(attempts===10){showMilestoneToast('🔥','稳步上升！');setTimeout(function(){speak('太棒了！江冠铖信心大增！',.85)},300)}
-    else if(attempts===15){showMilestoneToast('⚡','突破瓶颈！');setTimeout(function(){speak('厉害了！成绩越来越好！理综马上出分！',.85)},300)}
-    else if(attempts===20){showMilestoneToast('💎','就差一步！');setTimeout(function(){speak('差一点了！江冠铖就要金榜题名了！',.85)},300)}
+  if(attempts>0&&attempts%5===0&&attempts<25){
+    sfxMilestone();
+    if(attempts===5){showMilestoneToast('📈');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_5);speak('太棒了！！江冠铖成绩开始飙升！继续冲！！',.8)},200)}
+    else if(attempts===10){showMilestoneToast('🔥');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_10);speak('江冠铖成绩越来越好！！再加把劲！！冲啊！！',.8)},200)}
+    else if(attempts===15){showMilestoneToast('⚡');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_15);speak('厉害了！！成绩突飞猛进！！理综马上出分！！',.8)},200)}
+    else if(attempts===20){showMilestoneToast('💎');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_20);speak('就差一步了！！江冠铖就要金榜题名了！！',.8)},200)}
   }
 }
 
 function tryCheer(e){
   e&&e.preventDefault();
   if(done)return;
-  if(!currentPlayer){showNameDialog();return;}
+  if(!currentPlayer){showNameDialog();return}
 
   attempts++;
   var now=Date.now();
@@ -688,8 +624,10 @@ function tryCheer(e){
   lastTap=now;
 
   var rect=btn.getBoundingClientRect();
-  var pcount=combo>=5?14:8;
-  spawnParticles(rect.left+rect.width/2,rect.top,pcount);
+  spawnParticles(rect.left+rect.width/2,rect.top,combo>=5?14:8);
+
+  sfxClick();  // 每次点击都响
+
   dodge();
   updateFace();
 
@@ -697,25 +635,26 @@ function tryCheer(e){
 
   if(combo&&comboNames[combo]){
     msg='<span style="font-size:38px">'+(combo>=8?'💥':combo>=5?'🔥':'⚡️')+'</span><br>'+comboNames[combo];
-    if(combo>=5)speak('连击！'+combo+'连击！',1.1);
+    if(combo>=3)sfxCombo(combo);
+    if(combo>=5){shout('连击！！'+combo+'连击！！',50,45);speak('太强了！！'+combo+'连击！！继续继续！！',1)}
   }else if(milestones[attempts]){
     msg=milestones[attempts];
   }else if(isFake){
     msg=fakeMsgs[Math.floor(Math.random()*fakeMsgs.length)];
     btn.style.boxShadow='0 0 50px rgba(255,215,0,.9),0 0 100px rgba(255,170,0,.5)';
     setTimeout(function(){btn.style.boxShadow='0 8px 28px rgba(214,48,49,.5)'},600);
-    speak(VOICE_FAKE[Math.floor(Math.random()*VOICE_FAKE.length)],1.1);
+    sfxFake();
+    setTimeout(function(){shoutRandom(SHOUT_FAKE)},100);
   }else if(attempts>=18&&attempts<25&&attempts%2===0){
     msg=realMsgs[Math.floor(Math.random()*realMsgs.length)];
-    speak(VOICE_REAL[Math.floor(Math.random()*VOICE_REAL.length)],1);
+    sfxCheer();
+    setTimeout(function(){shoutRandom(SHOUT_REAL)},100);
+    speak('好！！加到油了！！江冠铖收到能量！！继续！',.9);
   }else{
-    if(attempts>3&&Math.random()<.3){
-      msg=tauntsN[Math.floor(Math.random()*tauntsN.length)].replace('{n}',attempts);
-    }else{
-      msg=taunts[Math.floor(Math.random()*taunts.length)];
-    }
-    // 偶尔语音吐槽
-    if(Math.random()<.15)speak('加油加油！',1.2);
+    if(attempts>3&&Math.random()<.3){msg=tauntsN[Math.floor(Math.random()*tauntsN.length)].replace('{n}',attempts)}
+    else{msg=taunts[Math.floor(Math.random()*taunts.length)]}
+    sfxDodge();
+    if(Math.random()<.2)shout('加油！',30+Math.random()*40,35+Math.random()*20);
   }
 
   updateMsg(msg);
@@ -723,31 +662,25 @@ function tryCheer(e){
   checkMilestone();
 
   if(attempts%4===0){heroDesk.classList.add('shake');setTimeout(function(){heroDesk.classList.remove('shake')},450)}
-  if(attempts===10||attempts===20){
-    container.classList.add('screen-flash');
-    setTimeout(function(){container.classList.remove('screen-flash')},400);
-  }
+  if(attempts===10||attempts===20){container.classList.add('screen-flash');setTimeout(function(){container.classList.remove('screen-flash')},400)}
 
   if(attempts>=25){
     done=true;
     btn.style.left='50%';btn.style.top='50%';btn.style.transform='translate(-50%,-50%)';
-    btn.textContent='✅ 加油成功';
-    btn.classList.add('done');
-    heroFace.textContent='🥳';
-    heroFace.classList.add('celebrate');
-    updateCheerBar();
-    checkMilestone();  // 最终成绩
+    btn.textContent='✅ 加油成功';btn.classList.add('done');
+    heroFace.textContent='🥳';heroFace.classList.add('celebrate');
+    updateCheerBar();checkMilestone();
     updateMsg('<span style="font-size:38px">🎉</span><br>江冠铖感受到了力量！<br>你点了 <b style="color:#e17055;font-size:26px">'+attempts+'</b> 次终于加上了！',
       '<span style="color:#00b894;font-size:12px">最高连击: '+maxCombo+'次 | 江冠铖满血复活！</span>');
 
-    // 胜利语音
-    setTimeout(function(){speak(VOICE_VICTORY,.8)},500);
+    sfxVictory();
+    setTimeout(function(){shout('高考必胜！！',50,40)},300);
+    setTimeout(function(){shout('金榜题名！！',50,55)},800);
+    setTimeout(function(){shout('前程似锦！！',50,45)},1300);
+    speak('江冠铖！！高考必胜！！金榜题名！！清华北大！！冲啊！！',.8);
+
     // 胜利粒子雨
-    setTimeout(function(){
-      for(var i=0;i<3;i++){
-        setTimeout(function(){spawnParticles(window.innerWidth/2,window.innerHeight/2,20)},i*400);
-      }
-    },200);
+    setTimeout(function(){for(var i=0;i<3;i++){setTimeout(function(){spawnParticles(window.innerWidth/2,window.innerHeight/2,20)},i*400)}},200);
 
     addRecord(currentPlayer,attempts,maxCombo);
     setTimeout(function(){
@@ -759,36 +692,34 @@ function tryCheer(e){
 }
 
 function closeWin(e){
-  e&&e.preventDefault();
-  winOverlay.classList.remove('show');
+  e&&e.preventDefault();winOverlay.classList.remove('show');
   setTimeout(function(){
     attempts=0;done=false;combo=0;maxCombo=0;lastMilestone=0;
     btn.style.left='50%';btn.style.top='50%';btn.style.transform='translate(-50%,-50%)';
-    btn.textContent='💪 点击加油';
-    btn.classList.remove('done');
+    btn.textContent='💪 点击加油';btn.classList.remove('done');
     btn.style.boxShadow='0 8px 28px rgba(214,48,49,.5)';
-    heroFace.textContent='😰';
-    heroFace.classList.remove('celebrate');
+    heroFace.textContent='😰';heroFace.classList.remove('celebrate');
     cheerItems.forEach(function(i){i.classList.remove('active')});
-    updateScoreboard(0);
-    updateMsg('江冠铖看起来好紧张...<br>快点击加油帮他打气！');
+    updateScoreboard(0);updateMsg('江冠铖看起来好紧张...<br>快点击加油帮他打气！');
   },400);
 }
 
 btn.addEventListener('pointerdown',tryCheer);
 winClose.addEventListener('pointerdown',closeWin);
 
-// ── 初始化 ──
+// ══════════════════ 初始化 ══════════════════
+
 currentPlayer=loadPlayer();
-if(currentPlayer){
-  playerNameDisplay.textContent=currentPlayer;
-  hideNameDialog();
-}else{
-  playerNameDisplay.textContent='点击设置';
-}
+if(currentPlayer){playerNameDisplay.textContent=currentPlayer;hideNameDialog()}
+else{playerNameDisplay.textContent='点击设置'}
 updateScoreboard(0);
 updateMsg('江冠铖看起来好紧张...<br>快点击加油帮他打气！');
 renderBoard();
+
+// 首次点击时初始化 AudioContext (手机浏览器要求用户交互后才能播放声音)
+document.addEventListener('pointerdown',function initAudio(){
+  getCtx();if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+},{once:false});
 })();
 </script>
 </body>
