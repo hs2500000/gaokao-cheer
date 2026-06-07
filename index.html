@@ -324,90 +324,40 @@ var voiceToggle=document.getElementById('voiceToggle');
 var milestoneToast=document.getElementById('milestoneToast');
 
 var attempts=0,done=false,combo=0,maxCombo=0,lastTap=0,currentPlayer='',soundEnabled=true,lastMilestone=0;
+
+// ══════════════════ 音效系统 ══════════════════
+// Web Audio API — 简单叮咚声（所有设备通用）
 var AudioCtx=window.AudioContext||window.webkitAudioContext;
 var audioCtx=null;
-
-function getCtx(){
-  if(!audioCtx){try{audioCtx=new AudioCtx()}catch(e){}}
-  return audioCtx;
-}
-
-// ══════════════════ 音效系统 (Web Audio API — 手机/电脑通用) ══════════════════
-
+function getCtx(){if(!audioCtx){try{audioCtx=new AudioCtx()}catch(e){}}return audioCtx}
 function playTone(freq,dur,type,vol,delay){
   if(!soundEnabled)return;
-  try{
-    var c=getCtx();if(!c)return;
-    var t=c.currentTime+(delay||0);
-    var o=c.createOscillator();var g=c.createGain();
-    o.type=type||'sine';o.frequency.setValueAtTime(freq,t);
-    g.gain.setValueAtTime(vol||.15,t);
-    g.gain.exponentialRampToValueAtTime(.001,t+dur);
-    o.connect(g);g.connect(c.destination);
-    o.start(t);o.stop(t+dur);
-  }catch(e){}
+  try{var c=getCtx();if(!c)return;var t=c.currentTime+(delay||0);var o=c.createOscillator();var g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(vol||.15,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur)}catch(e){}
+}
+function sfxClick(){playTone(800,.08,'sine',.1);playTone(1200,.05,'sine',.06,.03)}
+function sfxDodge(){playTone(400,.1,'triangle',.08);playTone(300,.12,'triangle',.06,.05)}
+function sfxCheer(){playTone(523,.12,'sine',.18,0);playTone(659,.12,'sine',.16,.08);playTone(784,.18,'sine',.2,.15)}
+function sfxFake(){playTone(600,.1,'triangle',.12,0);playTone(400,.15,'triangle',.1,.06);playTone(200,.2,'sawtooth',.04,.12)}
+function sfxCombo(n){for(var i=0;i<Math.min(n,5);i++){playTone(600+i*200,.08,'sine',.12,i*.06)}}
+function sfxMilestone(){playTone(523,.15,'triangle',.2,0);playTone(659,.15,'triangle',.18,.1);playTone(784,.15,'triangle',.16,.2);playTone(1047,.35,'triangle',.22,.3)}
+function sfxVictory(){var notes=[523,659,784,1047,784,1047,1319];for(var i=0;i<notes.length;i++){playTone(notes[i],.2,'triangle',.2,i*.12)}for(var j=0;j<4;j++){playTone(80,.08,'square',.25,j*.4)}setTimeout(function(){playTone(1047,.6,'triangle',.18,0);playTone(1319,.6,'triangle',.15,.1);playTone(1568,.8,'triangle',.12,.2)},800)}
+
+// MP3 语音 — 参考水项目方案，手机/微信可播
+var currentAudio=null;
+function playAudio(name){
+  if(!soundEnabled)return;
+  if(currentAudio){currentAudio.pause();currentAudio.src='';currentAudio=null;}
+  var a=new Audio();
+  a.src='audio/'+name+'.mp3';
+  currentAudio=a;
+  var played=false;
+  var doPlay=function(){if(!played){played=true;a.play().catch(function(){})}};
+  a.addEventListener('canplay',doPlay,{once:true});
+  a.load();
+  a.play().catch(function(){});
 }
 
-// 点击声
-function sfxClick(){
-  playTone(800,.08,'sine',.1);
-  playTone(1200,.05,'sine',.06,.03);
-}
-
-// 按钮逃跑声
-function sfxDodge(){
-  playTone(400,.1,'triangle',.08);
-  playTone(300,.12,'triangle',.06,.05);
-}
-
-// 真正加油声 (激昂上扬)
-function sfxCheer(){
-  playTone(523,.12,'sine',.18,0);   // C5
-  playTone(659,.12,'sine',.16,.08);  // E5
-  playTone(784,.18,'sine',.2,.15);   // G5 — 激昂!
-}
-
-// 假加油声 (下行 — 被骗了)
-function sfxFake(){
-  playTone(600,.1,'triangle',.12,0);
-  playTone(400,.15,'triangle',.1,.06);
-  playTone(200,.2,'sawtooth',.04,.12);
-}
-
-// 连击声
-function sfxCombo(n){
-  for(var i=0;i<Math.min(n,5);i++){
-    playTone(600+i*200,.08,'sine',.12,i*.06);
-  }
-}
-
-// 里程碑声 (辉煌钟声)
-function sfxMilestone(){
-  playTone(523,.15,'triangle',.2,0);
-  playTone(659,.15,'triangle',.18,.1);
-  playTone(784,.15,'triangle',.16,.2);
-  playTone(1047,.35,'triangle',.22,.3);
-}
-
-// 胜利号角 (超激昂!)
-function sfxVictory(){
-  var notes=[523,659,784,1047,784,1047,1319];
-  for(var i=0;i<notes.length;i++){
-    playTone(notes[i],.2,'triangle',.2,i*.12);
-  }
-  // 低音鼓点
-  for(var j=0;j<4;j++){
-    playTone(80,.08,'square',.25,j*.4);
-  }
-  // 持续高音
-  setTimeout(function(){
-    playTone(1047,.6,'triangle',.18,0);
-    playTone(1319,.6,'triangle',.15,.1);
-    playTone(1568,.8,'triangle',.12,.2);
-  },800);
-}
-
-// ══════════════════ 呐喊气泡 (视觉替代语音) ══════════════════
+// ══════════════════ 呐喊气泡 (视觉装饰) ══════════════════
 
 function shout(text,x,y){
   var b=document.createElement('div');
@@ -423,24 +373,21 @@ function shoutRandom(msgs){
   shout(msgs[Math.floor(Math.random()*msgs.length)],30+Math.random()*40,30+Math.random()*30);
 }
 
-// ══════════════════ 语音 (SpeechSynthesis — 桌面增强) ══════════════════
+// ══════════════════ 语音播放 (MP3 音频 — 水项目方案，手机/微信通用) ══════════════════
 
-var SHOUT_CHEER=['加油！！','冲啊！！','好样的！！','继续！！','你可以的！！','必胜！！'];
-var SHOUT_FAKE=['啊！差一点！','偏了！！','再来！！','加油信号丢了！'];
-var SHOUT_REAL=['加到油了！！','能量来了！！','江冠铖收到！','继续冲！！'];
+var SHOUT_CHEER=['加油！！','冲啊！！','好样的！！','继续！！'];
+var SHOUT_FAKE=['啊！差一点！','偏了！！','再来！！'];
+var SHOUT_REAL=['加到油了！！','能量来了！！','江冠铖收到！'];
 var SHOUT_MILESTONE_5=['成绩提升了！！','及格了！！冲啊！！'];
 var SHOUT_MILESTONE_10=['越来越好！！','稳住继续冲！！'];
 var SHOUT_MILESTONE_15=['突破瓶颈！！','突飞猛进！！'];
-var SHOUT_MILESTONE_20=['就差一步了！！','理综要出分了！！','江冠铖加油！！'];
+var SHOUT_MILESTONE_20=['就差一步了！！','理综要出分了！！'];
 
-function speak(text,rate){
-  if(!soundEnabled)return;
-  try{
-    var u=new SpeechSynthesisUtterance(text);
-    u.lang='zh-CN';u.rate=rate||.9;u.volume=.9;u.pitch=1.2;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(u);
-  }catch(e){}
+function speakMilestone(n){
+  if(n>=20)playAudio('milestone20');
+  else if(n>=15)playAudio('milestone15');
+  else if(n>=10)playAudio('milestone10');
+  else if(n>=5)playAudio('milestone5');
 }
 
 // ══════════════════ 成绩系统 ══════════════════
@@ -605,10 +552,11 @@ function checkMilestone(){
 
   if(attempts>0&&attempts%5===0&&attempts<25){
     sfxMilestone();
-    if(attempts===5){showMilestoneToast('📈');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_5);speak('太棒了！！江冠铖成绩开始飙升！继续冲！！',.8)},200)}
-    else if(attempts===10){showMilestoneToast('🔥');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_10);speak('江冠铖成绩越来越好！！再加把劲！！冲啊！！',.8)},200)}
-    else if(attempts===15){showMilestoneToast('⚡');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_15);speak('厉害了！！成绩突飞猛进！！理综马上出分！！',.8)},200)}
-    else if(attempts===20){showMilestoneToast('💎');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_20);speak('就差一步了！！江冠铖就要金榜题名了！！',.8)},200)}
+    speakMilestone(attempts);
+    if(attempts===5){showMilestoneToast('📈');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_5)},200)}
+    else if(attempts===10){showMilestoneToast('🔥');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_10)},200)}
+    else if(attempts===15){showMilestoneToast('⚡');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_15)},200)}
+    else if(attempts===20){showMilestoneToast('💎');setTimeout(function(){shoutRandom(SHOUT_MILESTONE_20)},200)}
   }
 }
 
@@ -636,7 +584,7 @@ function tryCheer(e){
   if(combo&&comboNames[combo]){
     msg='<span style="font-size:38px">'+(combo>=8?'💥':combo>=5?'🔥':'⚡️')+'</span><br>'+comboNames[combo];
     if(combo>=3)sfxCombo(combo);
-    if(combo>=5){shout('连击！！'+combo+'连击！！',50,45);speak('太强了！！'+combo+'连击！！继续继续！！',1)}
+    if(combo>=5){shout('连击！！'+combo+'连击！！',50,45)}
   }else if(milestones[attempts]){
     msg=milestones[attempts];
   }else if(isFake){
@@ -649,7 +597,7 @@ function tryCheer(e){
     msg=realMsgs[Math.floor(Math.random()*realMsgs.length)];
     sfxCheer();
     setTimeout(function(){shoutRandom(SHOUT_REAL)},100);
-    speak('好！！加到油了！！江冠铖收到能量！！继续！',.9);
+    /* 加油音效由 Web Audio 处理 */
   }else{
     if(attempts>3&&Math.random()<.3){msg=tauntsN[Math.floor(Math.random()*tauntsN.length)].replace('{n}',attempts)}
     else{msg=taunts[Math.floor(Math.random()*taunts.length)]}
@@ -674,10 +622,10 @@ function tryCheer(e){
       '<span style="color:#00b894;font-size:12px">最高连击: '+maxCombo+'次 | 江冠铖满血复活！</span>');
 
     sfxVictory();
+    playAudio('victory');
     setTimeout(function(){shout('高考必胜！！',50,40)},300);
     setTimeout(function(){shout('金榜题名！！',50,55)},800);
     setTimeout(function(){shout('前程似锦！！',50,45)},1300);
-    speak('江冠铖！！高考必胜！！金榜题名！！清华北大！！冲啊！！',.8);
 
     // 胜利粒子雨
     setTimeout(function(){for(var i=0;i<3;i++){setTimeout(function(){spawnParticles(window.innerWidth/2,window.innerHeight/2,20)},i*400)}},200);
